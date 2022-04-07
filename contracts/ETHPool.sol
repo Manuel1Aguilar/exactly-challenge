@@ -31,7 +31,10 @@ contract ETHPool {
             teamAddresses[_teamAddresses[index]] = true;
         }
     }
-    // Looping through the shareBalances array is a known risk
+    // Looping through the shareBalances array is a known risk it can maybe be mitigated by having a min value check
+    // so no one can deposit small values with a lot of accounts. Also a way to do the loop in batches can be 
+    // implemented.
+    // I'm not implementing a batch solution for the loops because I don't think this should be the answer
     // There may be an overflow problem too when calculating the reward but I'm not sure it's possible
     // to reach the wei values to overflow uint256
     function deposit() public payable {
@@ -68,7 +71,8 @@ contract ETHPool {
         for (uint256 index = 0; index < shareBalances.length; index++) {
             if(shareBalances[index].owner == msg.sender){
                 withdrawValue = shareBalances[index].absValue;
-                shareBalances[index].absValue = 0;
+                shareBalances[index] = shareBalances[shareBalances.length - 1];
+                shareBalances.pop();
                 break;
             }
         }
