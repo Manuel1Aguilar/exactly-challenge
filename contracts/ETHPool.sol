@@ -34,35 +34,34 @@ contract ETHPool {
     // Looping through the shareBalances array is a known risk it can maybe be mitigated by having a min value check
     // so no one can deposit small values with a lot of accounts. Also a way to do the loop in batches can be 
     // implemented.
-    // I'm not implementing a batch solution for the loops because I don't think this should be the answer
     // There may be an overflow problem too when calculating the reward but I'm not sure it's possible
     // to reach the wei values to overflow uint256
     function deposit() public payable {
         if(teamAddresses[msg.sender] == true){
             // Calculate and deposit rewards
             for (uint256 index = 0; index < shareBalances.length; index++) {
-                // Update abs value
-                //This gives the % as XXxx 
-                uint256 rewardPercentage = (shareBalances[index].absValue * 10000) / contractBalance; 
                 // Calculate what number this % of the total represents
-                uint256 rewardValue = msg.value * rewardPercentage / 10000; 
+                uint256 rewardValue = ((shareBalances[index].absValue * msg.value) / contractBalance); 
                 // Update share of the total value deposited on the contract w/ reward
-                shareBalances[index].absValue = shareBalances[index].absValue + rewardValue; 
+                shareBalances[index].absValue += rewardValue; 
             }
         } else {
             // Update share absValues
             for (uint256 index = 0; index < shareBalances.length; index++) {
-                if( shareBalances[index].owner == msg.sender){
-                    shareBalances[index].absValue = msg.value;
+                if(shareBalances[index].owner == msg.sender){
+                    shareBalances[index].absValue += msg.value;
                     break;
                 }
-                if(index == shareBalances.length){
+                if(index == shareBalances.length - 1){
+                    // Arbitrary value to demonstrate a way to protect from denial of service attacks
+                    require(msg.value > 0.1 ether, "Can't deposit less than 0.1 eth"); 
                     shareBalances.push(Share(msg.sender, msg.value));
+                    break;
                 }
             }
         }
         //Update contract balance
-        contractBalance = contractBalance + msg.value;
+        contractBalance += msg.value;
     }
 
     function withdraw() public{
