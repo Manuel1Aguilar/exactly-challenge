@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node --no-deploy",
+    "deploy-local": "hardhat deploy --network localhost",
+    "console-local": "hardhat console --network localhost"
   },
   "keywords": [],
   "author": "",
@@ -40,5 +45,9 @@
     "ts-node": "^10.7.0",
     "typechain": "^5.2.0",
     "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.5.0",
+    "hardhat-contract-sizer": "^2.5.1"
   }
 }
