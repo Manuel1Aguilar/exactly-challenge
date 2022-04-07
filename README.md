@@ -2,7 +2,7 @@
 
 https://github.com/exactly-finance/challenge
 
-#Not done yet:
+# Not done yet:
 
 - tests
 - case without looping through an externally defined array
